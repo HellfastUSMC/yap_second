@@ -1,10 +1,5 @@
 package main
 
-import (
-	"fmt"
-	"unicode"
-)
-
 //var dumpFile *os.File
 //
 //func init() {
@@ -369,7 +364,6 @@ import (
 //	client.Decode(adapter)
 //}
 
-
 //package main
 //
 //import (
@@ -448,104 +442,207 @@ import (
 //	}
 //}
 
-package main
+//package main
+//
+//import (
+//"fmt"
+//"unicode"
+//)
+//
+//type TokenType int
+//
+//const (
+//	TNumber = iota
+//)
+//
+//const (
+//	StateMain = iota
+//	StateNumber
+//)
+//
+//// Token — информация о токене.
+//type Token struct {
+//	Type  TokenType
+//	Value string
+//}
+//
+//// State — интерфейс состояния. Next передаёт очередной символ.
+//// Если символ разобран, то возвращается true.
+//type State interface {
+//	Next(rune) bool
+//}
+//
+//// Number определяет число.
+//type Number struct {
+//	buf   []rune
+//	lexer *Lexer
+//}
+//
+//func (l *Number) Next(r rune) bool {
+//	if unicode.IsDigit(r) {
+//		l.buf = append(l.buf, r)
+//		return true
+//	}
+//	l.lexer.NewToken(TNumber, l.buf)
+//	l.lexer.SetState(StateMain)
+//	l.buf = l.buf[:0]
+//	return false
+//}
+//
+//// Main — состояние по умолчанию.
+//type Main struct {
+//	lexer *Lexer
+//}
+//
+//func (l *Main) Next(r rune) bool {
+//	if unicode.IsDigit(r) {
+//		l.lexer.SetState(StateNumber)
+//		return false
+//	}
+//	return true
+//}
+//
+//// Lexer содержит список состояний и полученные токены.
+//type Lexer struct {
+//	states []State
+//	state  State
+//	tokens []Token
+//}
+//
+//// SetState изменяет состояние.
+//func (lex *Lexer) SetState(state int) {
+//	if state >= len(lex.states) {
+//		panic("unknown state")
+//	}
+//	lex.state = lex.states[state]
+//}
+//
+//// NewToken добавляет токен.
+//func (lex *Lexer) NewToken(t TokenType, value []rune) {
+//	lex.tokens = append(lex.tokens, Token{
+//		Type:  t,
+//		Value: string(value),
+//	})
+//}
+//
+//func main() {
+//	var lex Lexer
+//
+//	// определяем состояния
+//	lex.states = []State{&Main{lexer: &lex}, &Number{lexer: &lex}}
+//	lex.SetState(StateMain)
+//
+//	// пробуем разобрать эту строку
+//	s := "line778, 5 + 35 равно 40"
+//	for _, ch := range s {
+//		for !lex.state.Next(ch) {
+//		}
+//	}
+//	// завершаем разбор последнего токена, если он начат
+//	lex.state.Next(0)
+//
+//	fmt.Println(lex.tokens)
+//}
 
-import (
-"fmt"
-"unicode"
-)
+//type Person struct {
+//	Name string
+//	Age  int
+//}
+//
+//func (p Person) String() string {
+//	return fmt.Sprintf("%s: %d", p.Name, p.Age)
+//}
+//
+//type ByAge []Person
+//
+//// реализуем интерфейс sort.Interface для сортировки по возрасту
+//
+//func (a ByAge) Len() int           { return len(a) }
+//func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+//func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+//
+//// Sort сортирует слайс ByAge, так он реализует интерфейс sort.Interface.
+//func (a ByAge) Sort() {
+//	sort.Slice(a, func(i, j int) bool { return a[i].Name < a[j].Name })
+//	sort.Slice(a, func(i, j int) bool { return a[i].Age < a[j].Age })
+//}
+//
+//func main() {
+//	people := ByAge{
+//		{"Bob", 31},
+//		{"John", 48}, // John старший
+//		{"Michael", 17},
+//		{"John", 26}, // John младший
+//	}
+//
+//	fmt.Println(people)
+//	// можем применить шаблонный метод
+//	people.Sort()
+//	fmt.Println(people)
+//}
+//
+//var Funcs = make(map[string]func(r *http.Request)) // пустой интерфейс может принять любое значение
+//
+//func DBInsert(r *http.Request) {
+//	// логика вставки
+//}
+//
+//func DBDelete(r *http.Request) {
+//	// логика удаления
+//}
+//
+//func main() {
+//	Funcs["DBInsert"] = DBInsert
+//	Funcs["DBDelete"] = DBDelete
+//	Funcs["DBChange"] = func(r *http.Request) {
+//		// логика изменения
+//	}
+//	// ...
+//}
 
-type TokenType int
+//package main
+//import (
+//"fmt"
+//"reflect"
+//"unsafe"
+//)
+//func main() {
+//	array := [10]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+//	slice := array[:5]
+//	// ограничили длину len слайса, но его вместимость cap не изменилась
+//	fmt.Println(cap(slice)) // 10
+//	// получим заголовок слайса
+//	slHeader := (*reflect.SliceHeader)(unsafe.Pointer(&slice))
+//	// и в нём ограничим capacity
+//	slHeader.Cap = 5
+//	// так работает
+//	fmt.Println(cap(slice)) // 5
+//	// теперь, поскольку вместительность слайса ограничена,
+//	// при вызове append ему будет выделен новый участок памяти
+//	slice = append(slice, 42)
+//	fmt.Println(slice) // [0 1 2 3 4 42]
+//	// защитим несущий массив array от неожидаемых изменений
+//	fmt.Println(array) // [0 1 2 3 4 5 6 7 8 9]
+//}
+//
+//func ConditionalWrite(w io.Writer) (int, error) {
+//	// используем рефлексию для определения конкретного типа
+//	switch w.(type) {
+//	case *os.File:
+//		fmt.Print("File")
+//	default:
+//		fmt.Println("AAasddsdsdasd")
+//		// если это *os.File, предпринимаем действия
+//	}
+//	// действуем по-другому
+//	return 0, nil
+//}
 
-const (
-	TNumber = iota
-)
-
-const (
-	StateMain = iota
-	StateNumber
-)
-
-// Token — информация о токене.
-type Token struct {
-	Type  TokenType
-	Value string
-}
-
-// State — интерфейс состояния. Next передаёт очередной символ.
-// Если символ разобран, то возвращается true.
-type State interface {
-	Next(rune) bool
-}
-
-// Number определяет число.
-type Number struct {
-	buf   []rune
-	lexer *Lexer
-}
-
-func (l *Number) Next(r rune) bool {
-	if unicode.IsDigit(r) {
-		l.buf = append(l.buf, r)
-		return true
-	}
-	l.lexer.NewToken(TNumber, l.buf)
-	l.lexer.SetState(StateMain)
-	l.buf = l.buf[:0]
-	return false
-}
-
-// Main — состояние по умолчанию.
-type Main struct {
-	lexer *Lexer
-}
-
-func (l *Main) Next(r rune) bool {
-	if unicode.IsDigit(r) {
-		l.lexer.SetState(StateNumber)
-		return false
-	}
-	return true
-}
-
-// Lexer содержит список состояний и полученные токены.
-type Lexer struct {
-	states []State
-	state  State
-	tokens []Token
-}
-
-// SetState изменяет состояние.
-func (lex *Lexer) SetState(state int) {
-	if state >= len(lex.states) {
-		panic("unknown state")
-	}
-	lex.state = lex.states[state]
-}
-
-// NewToken добавляет токен.
-func (lex *Lexer) NewToken(t TokenType, value []rune) {
-	lex.tokens = append(lex.tokens, Token{
-		Type:  t,
-		Value: string(value),
-	})
-}
-
-func main() {
-	var lex Lexer
-
-	// определяем состояния
-	lex.states = []State{&Main{lexer: &lex}, &Number{lexer: &lex}}
-	lex.SetState(StateMain)
-
-	// пробуем разобрать эту строку
-	s := "line778, 5 + 35 равно 40"
-	for _, ch := range s {
-		for !lex.state.Next(ch) {
-		}
-	}
-	// завершаем разбор последнего токена, если он начат
-	lex.state.Next(0)
-
-	fmt.Println(lex.tokens)
-}
+//type Storage map[string]string
+//
+//func (s Storage) Get(key string) (string, error) {
+//	if _, ok := s[key]; !ok {
+//		return "", fmt.Errorf("no key %s in map", key)
+//	}
+//	return s[key], nil
+//}
